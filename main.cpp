@@ -11,6 +11,8 @@
 #include <QTextStream>
 #include <QCloseEvent>
 
+   #define etimes 10000 // elapsed ammount max
+
 class Stopwatch : public QMainWindow {
     Q_OBJECT
 public:
@@ -65,10 +67,10 @@ private slots:
 
     void stopTimer() {
         int elapsed = elapsedTimer->elapsed();
-       // if (elapsedTimesCount < 15) {
+        if (elapsedTimesCount < etimes) {
             elapsedTimes[elapsedTimesCount++] = elapsed;
             displayElapsedTimes();
-      //  }
+        }
         timerLabel->setText(QTime(0, 0).addMSecs(elapsed).toString("hh:mm:ss"));
     }
 
@@ -149,7 +151,7 @@ private:
     QTimer *timer;
     QTime *elapsedTimer;
     QTime startTime;
-    qint64 elapsedTimes[255];
+    qint64 elapsedTimes[etimes];
     int elapsedTimesCount;
     QSystemTrayIcon *trayIcon;
     QMenu *trayIconMenu;
