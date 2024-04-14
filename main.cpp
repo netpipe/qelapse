@@ -19,24 +19,28 @@ public:
         timerLabel->setAlignment(Qt::AlignCenter);
         timerLabel->setGeometry(100, 50, 200, 50);
 
+        realTimeLabel = new QLabel(QTime::currentTime().toString("hh:mm:ss AP"), this);
+        realTimeLabel->setAlignment(Qt::AlignCenter);
+        realTimeLabel->setGeometry(100, 100, 200, 20);
+
         startButton = new QPushButton("Start", this);
-        startButton->setGeometry(100, 120, 80, 30);
+        startButton->setGeometry(100, 150, 80, 30);
         connect(startButton, &QPushButton::clicked, this, &Stopwatch::startTimer);
 
         stopButton = new QPushButton("Stop", this);
-        stopButton->setGeometry(200, 120, 80, 30);
+        stopButton->setGeometry(200, 150, 80, 30);
         connect(stopButton, &QPushButton::clicked, this, &Stopwatch::stopTimer);
 
         resetButton = new QPushButton("Reset", this);
-        resetButton->setGeometry(150, 170, 80, 30);
+        resetButton->setGeometry(150, 200, 80, 30);
         connect(resetButton, &QPushButton::clicked, this, &Stopwatch::resetTimer);
 
         exportButton = new QPushButton("Export", this);
-        exportButton->setGeometry(150, 220, 80, 30);
+        exportButton->setGeometry(150, 250, 80, 30);
         connect(exportButton, &QPushButton::clicked, this, &Stopwatch::exportResults);
 
         elapsedTimesList = new QListWidget(this);
-        elapsedTimesList->setGeometry(100, 270, 200, 150);
+        elapsedTimesList->setGeometry(100, 300, 200, 150);
 
         timer = new QTimer(this);
         connect(timer, &QTimer::timeout, this, &Stopwatch::updateTime);
@@ -45,6 +49,7 @@ public:
         elapsedTimesCount = 0;
 
         createTrayIcon();
+        startRealTimeTimer();
     }
 
     ~Stopwatch() {
@@ -60,10 +65,10 @@ private slots:
 
     void stopTimer() {
         int elapsed = elapsedTimer->elapsed();
-       // if (elapsedTimesCount < 55) {
+       // if (elapsedTimesCount < 15) {
             elapsedTimes[elapsedTimesCount++] = elapsed;
             displayElapsedTimes();
-       // }
+      //  }
         timerLabel->setText(QTime(0, 0).addMSecs(elapsed).toString("hh:mm:ss"));
     }
 
@@ -83,16 +88,9 @@ private slots:
     }
 
     void displayElapsedTimes() {
-        elapsedTimesList->clear();
-        for (int i = 0; i < elapsedTimesCount; ++i) {
-            int minutes = elapsedTimes[i] / 60000;
-            int seconds = (elapsedTimes[i] % 60000) / 1000;
-            int milliseconds = elapsedTimes[i] % 1000;
-            QString timeString = QString("%1:%2.%3").arg(minutes, 2, 10, QChar('0'))
-                                                    .arg(seconds, 2, 10, QChar('0'))
-                                                    .arg(milliseconds, 3, 10, QChar('0'));
-            elapsedTimesList->addItem(timeString);
-        }
+        QTime currentTime = QTime::currentTime();
+        QString timeString = currentTime.toString("hh:mm:ss AP");
+        elapsedTimesList->addItem(timeString+" "+ timerLabel->text());
     }
 
     void createTrayIcon() {
@@ -110,6 +108,14 @@ private slots:
         trayIcon->setToolTip("Stopwatch");
         trayIcon->setContextMenu(trayIconMenu);
         trayIcon->show();
+    }
+
+    void startRealTimeTimer() {
+        QTimer *realTimeTimer = new QTimer(this);
+        connect(realTimeTimer, &QTimer::timeout, this, [this]() {
+            realTimeLabel->setText(QTime::currentTime().toString("hh:mm:ss AP"));
+        });
+        realTimeTimer->start(1000);
     }
 
     void exportResults() {
@@ -134,6 +140,7 @@ protected:
 
 private:
     QLabel *timerLabel;
+    QLabel *realTimeLabel;
     QPushButton *startButton;
     QPushButton *stopButton;
     QPushButton *resetButton;
