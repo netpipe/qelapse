@@ -10,6 +10,7 @@
 #include <QFileDialog>
 #include <QTextStream>
 #include <QCloseEvent>
+#include <QMessageBox>
 
    #define etimes 10000 // elapsed ammount max
 
@@ -70,6 +71,10 @@ private slots:
         if (elapsedTimesCount < etimes) {
             elapsedTimes[elapsedTimesCount++] = elapsed;
             displayElapsedTimes();
+        } else {
+QMessageBox::question(this, "max", "max number of lapses is "+ etimes, QMessageBox::Ok);
+
+
         }
         timerLabel->setText(QTime(0, 0).addMSecs(elapsed).toString("hh:mm:ss"));
     }
