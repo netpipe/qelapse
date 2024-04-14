@@ -60,10 +60,10 @@ private slots:
 
     void stopTimer() {
         int elapsed = elapsedTimer->elapsed();
-        if (elapsedTimesCount < 15) {
+       // if (elapsedTimesCount < 55) {
             elapsedTimes[elapsedTimesCount++] = elapsed;
             displayElapsedTimes();
-        }
+       // }
         timerLabel->setText(QTime(0, 0).addMSecs(elapsed).toString("hh:mm:ss"));
     }
 
@@ -142,7 +142,7 @@ private:
     QTimer *timer;
     QTime *elapsedTimer;
     QTime startTime;
-    qint64 elapsedTimes[15];
+    qint64 elapsedTimes[255];
     int elapsedTimesCount;
     QSystemTrayIcon *trayIcon;
     QMenu *trayIconMenu;
